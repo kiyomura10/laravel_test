@@ -1,0 +1,54 @@
+volumes:
+  php-fpm-volume:
+
+services:
+  nginx:
+    container_name: laravel-nginx
+    build: ./nginx/
+    working_dir: /var/www/app
+    image: laravel-nginx
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - php-fpm-volume:/var/run/
+      - ~/Portfolio/flashcard-2:/var/www/app
+    tty: true
+    depends_on:
+      - app
+
+  app:
+    container_name: laravel-app
+    build: ./app/
+    working_dir: /var/www/app
+    image: laravel-app
+    volumes:
+      - php-fpm-volume:/var/run/
+      - ~/Portfolio/flashcard-2:/var/www/app
+    tty: true
+    depends_on:
+      - postgresql
+      - redis
+
+  postgresql:
+    platform: linux/amd64
+    container_name: laravel-postgresql
+    build: ./postgresql/
+    image: laravel-postgresql
+    ports:
+      - "5432:5432"
+    volumes:
+      - ./postgresql/db_data:/var/lib/postgresql/data
+    environment:
+      POSTGRES_DB: laravel
+      POSTGRES_USER: laravel
+      POSTGRES_PASSWORD: laravel
+
+  redis:
+    container_name: laravel-redis
+    build: ./redis/
+    image: laravel-redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - ./redis/db_data:/data
