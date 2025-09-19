@@ -1,11 +1,7 @@
 name: AWS Run Command実行（デプロイ）
 
-'on':
-  pull_request:
-    branches:
-      - feature/php7.4
-    types:
-      - closed
+on:
+  workflow_dispatch:
 
 permissions:
   id-token: write
